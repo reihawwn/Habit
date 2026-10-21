@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F7F4EC">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>پیگیری عادت‌ها</title>
+<style>
+:root{--bg:#F7F4EC;--card:#FFFEFA;--sage:#879B83;--ink:#343A34;--sand:#DCC58A;--rose:#C98275;--line:#EAE5D6;--mute:#7A8077;--tint:#F0EDDF}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,"Noto Sans Arabic","Noto Naskh Arabic",Tahoma,"Segoe UI",sans-serif;line-height:1.7;padding:18px 10px 32px}
+main{max-width:1100px;margin:0 auto}
+header{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:14px}
+h1{font-size:.85rem;margin:0;font-weight:400;color:var(--mute)}
+.nav{display:flex;align-items:center;gap:10px}
+.nav b{min-width:8em;text-align:center;font-size:1.5rem;font-weight:600}
+button,input{font:inherit;color:inherit}
+.btn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 14px;cursor:pointer;min-height:38px}
+.btn:hover{border-color:var(--sage)}
+.nav .btn{width:38px;padding:0;border-radius:50%;font-size:1.3rem;line-height:1}
+.btn.pri{background:var(--sage);border-color:var(--sage);color:#fff}
+.btn.danger{color:#9a5347}
+:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+.warn{background:#F8EFD6;border:1px solid var(--sand);border-radius:10px;padding:8px 12px;font-size:.82rem;margin-bottom:10px}
+.wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;width:100%}
+th,td{padding:0;border-bottom:1px solid var(--line);text-align:center}
+tr:last-child>*{border-bottom:0}
+th{font-weight:400;font-size:.8rem;color:var(--mute);padding:6px 0 4px;background:var(--card)}
+th small{display:block;font-size:.65rem;opacity:.85;line-height:1.3}
+td{padding:3px 1.5px}
+.fri{background:rgba(220,197,138,.14)}
+th.today,td.today{background:var(--tint)}
+th.today{color:var(--ink);font-weight:700;box-shadow:inset 0 3px 0 var(--sage)}
+.h{position:sticky;inset-inline-start:0;z-index:2;background:var(--card);text-align:start;min-width:128px;max-width:128px;padding:4px 10px;border-inline-end:1px solid var(--line);font-size:.92rem}
+th.h{z-index:3;color:var(--ink);font-size:.8rem;font-weight:600}
+.h div{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.h span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h small{display:block;font-size:.7rem;color:var(--mute);margin-top:-2px}
+.x{background:none;border:0;color:#B3B6AE;cursor:pointer;font-size:1.05rem;padding:0 4px;line-height:1}
+.x:hover{color:var(--rose)}
+.c{display:block;width:100%;min-width:29px;height:30px;border:1px solid var(--line);border-radius:8px;background:transparent;cursor:pointer;font-size:.95rem;font-weight:700;padding:0}
+.c:hover{border-color:var(--sage)}
+.c[data-s="1"]{background:var(--sage);border-color:var(--sage);color:#fff}
+.c[data-s="2"]{background:var(--sand);border-color:var(--sand);color:var(--ink)}
+.c[data-s="3"]{background:var(--rose);border-color:var(--rose);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--mute);margin:12px 2px}
+.legend i{display:inline-block;width:20px;height:20px;line-height:18px;text-align:center;border-radius:6px;font-style:normal;font-weight:700;vertical-align:middle;margin-inline-end:5px;border:1px solid var(--line)}
+.add{display:flex;gap:8px;margin:14px 0}
+.add input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 14px;min-height:42px}
+.empty{padding:26px;text-align:center;color:var(--mute)}
+.err{color:#9a5347;font-size:.85rem;min-height:1.4em;margin:-6px 2px 4px}
+footer{margin-top:18px;font-size:.78rem;color:var(--mute)}
+footer .row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <h1>پیگیری عادت‌ها</h1>
+ <div class="nav">
+  <button class="btn" id="next" aria-label="ماه بعد">‹</button>
+  <b id="title" aria-live="polite"></b>
+  <button class="btn" id="prev" aria-label="ماه قبل">›</button>
+ </div>
+</header>
+<div class="warn" id="warn" role="alert" hidden></div>
+<div class="wrap" id="wrap"></div>
+<div class="legend" aria-label="راهنما">
+ <span><i style="background:var(--card)"></i>ثبت‌نشده</span>
+ <span><i style="background:var(--sage);color:#fff">✓</i>انجام شد</span>
+ <span><i style="background:var(--sand)">◐</i>نیمه‌کاره</span>
+ <span><i style="background:var(--rose);color:#fff">✕</i>انجام نشد</span>
+</div>
+<form class="add" id="addForm" onsubmit="return false">
+ <input id="name" maxlength="40" placeholder="عادت جدید…" aria-label="نام عادت جدید" autocomplete="off">
+ <button class="btn pri" id="addBtn" type="button">افزودن</button>
+</form>
+<div class="err" id="err" role="alert"></div>
+<footer>
+ <div class="row">
+  <button class="btn" id="export">دریافت پشتیبان</button>
+  <button class="btn" id="importBtn">بازیابی پشتیبان</button>
+  <button class="btn danger" id="reset">پاک‌کردن همه‌چیز</button>
+  <input type="file" id="file" accept="application/json,.json" hidden>
+ </div>
+ <p>اطلاعات فقط در همین مرورگر ذخیره می‌شود و به هیچ سروری ارسال نمی‌شود. با پاک‌کردن داده‌های مرورگر یا تعویض مرورگر/دستگاه از بین می‌رود؛ پس گاهی پشتیبان بگیرید.</p>
+</footer>
+</main>
+<script>
+"use strict";
+const KEY="habit-tracker-v1", SYM=["","✓","◐","✕"], LBL=["ثبت‌نشده","انجام شد","نیمه‌کاره","انجام نشد"];
+const MONTHS=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+const WD=["ی","د","س","چ","پ","ج","ش"]; // index = getUTCDay()
+const fa=n=>String(n).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
+const pad=n=>String(n).padStart(2,"0");
+const DAY=864e5;
+const fmt=new Intl.DateTimeFormat("en-US-u-ca-persian-nu-latn",{timeZone:"UTC",year:"numeric",month:"numeric",day:"numeric"});
+// Gregorian date (UTC noon) -> Jalali {y,m,d}, using the browser's built-in Persian calendar
+function jal(t){const p={};for(const x of fmt.formatToParts(new Date(t)))p[x.type]=x.value;return{y:+p.year,m:+p.month,d:+p.day}}
+const noon=()=>{const n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate(),12)};
+// first day (timestamp) of Jalali month containing t
+const firstOf=t=>t-(jal(t).d-1)*DAY;
+const nextFirst=f=>firstOf(f+31*DAY+0);   // 31 days later is always inside next month
+const prevFirst=f=>firstOf(f-DAY);
+function monthLen(f){const m=jal(f).m;let n=29;while(jal(f+n*DAY).m===m)n++;return n}
+let corrupt=false;
+function load(){let raw=null;try{raw=localStorage.getItem(KEY);if(raw===null)return{habits:[],records:{}};const d=JSON.parse(raw);if(valid(d))return d}catch(e){}
+ corrupt=true;try{localStorage.setItem(KEY+"-corrupt",raw)}catch(e){}return{habits:[],records:{}}}
+function valid(d){
+ if(!d||typeof d!=="object"||!Array.isArray(d.habits)||!d.records||typeof d.records!=="object"||Array.isArray(d.records))return false;
+ const ids=new Set();
+ for(const h of d.habits){if(!h||typeof h.id!=="string"||typeof h.name!=="string"||!h.name.trim()||h.name.length>40||ids.has(h.id))return false;ids.add(h.id)}
+ for(const id in d.records){if(!ids.has(id))return false;const r=d.records[id];if(!r||typeof r!=="object"||Array.isArray(r))return false;
+  for(const k in r){if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||![1,2,3].includes(r[k]))return false}}
+ return true}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data));corrupt=false}catch(e){storageOK=false;warn();say("ذخیره‌سازی ممکن نشد؛ پشتیبان بگیرید.")}}
+let data=load(), cur=firstOf(noon());
+const $=id=>document.getElementById(id);
+function say(m){$("err").textContent=m||""}
+function render(){
+ const j=jal(cur), n=monthLen(cur), td=noon(), tj=jal(td);
+ $("title").textContent=MONTHS[j.m-1]+" "+fa(j.y);
+ const w=$("wrap");w.textContent="";
+ if(!data.habits.length){const e=document.createElement("div");e.className="empty";e.textContent="هنوز عادتی اضافه نکرده‌اید. اولین عادت را در کادر پایین بنویسید.";w.append(e);return}
+ const tb=document.createElement("table"), hr=tb.createTHead().insertRow();
+ const h0=document.createElement("th");h0.className="h";h0.scope="col";h0.textContent="عادت";hr.append(h0);
+ for(let d=1;d<=n;d++){const t=cur+(d-1)*DAY, th=document.createElement("th");th.scope="col";
+  if(j.y===tj.y&&j.m===tj.m&&d===tj.d)th.className="today";
+  if(new Date(t).getUTCDay()===5)th.classList.add("fri");th.textContent=fa(d);const s=document.createElement("small");s.textContent=WD[new Date(t).getUTCDay()];th.append(s);hr.append(th)}
+ const body=tb.createTBody();
+ for(const h of data.habits){
+  const r=body.insertRow(), c0=document.createElement("th");c0.className="h";c0.scope="row";
+  const box=document.createElement("div"), sp=document.createElement("span"), x=document.createElement("button");
+  sp.textContent=h.name;sp.title=h.name;x.className="x";x.textContent="×";x.setAttribute("aria-label","حذف عادت «"+h.name+"»");
+  x.onclick=()=>{if(confirm("عادت «"+h.name+"» و همهٔ سابقهٔ آن حذف شود؟ این کار قابل بازگشت نیست.")){data.habits=data.habits.filter(z=>z.id!==h.id);delete data.records[h.id];save();render()}};
+  box.append(sp,x);const sm=document.createElement("small");
+  const upd=()=>{const q=data.records[h.id]||{};let c=0;for(let e=1;e<=n;e++)if(q[j.y+"-"+pad(j.m)+"-"+pad(e)]===1)c++;sm.textContent=fa(c)+" از "+fa(n)+" روز"};upd();
+  c0.append(box,sm);r.append(c0);
+  for(let d=1;d<=n;d++){
+   const k=j.y+"-"+pad(j.m)+"-"+pad(d), td2=r.insertCell(), b=document.createElement("button");
+   if(j.y===tj.y&&j.m===tj.m&&d===tj.d)td2.className="today";
+   if(new Date(cur+(d-1)*DAY).getUTCDay()===5)td2.classList.add("fri");const set=()=>{const s=(data.records[h.id]||{})[k]||0;b.dataset.s=s;b.textContent=SYM[s];
+    b.setAttribute("aria-label",h.name+"، "+fa(d)+" "+MONTHS[j.m-1]+": "+LBL[s])};
+   b.className="c";set();
+   b.onclick=()=>{const rec=data.records[h.id]||(data.records[h.id]={});const s=((rec[k]||0)+1)%4;
+    if(s)rec[k]=s;else delete rec[k];save();set();upd()};
+   td2.append(b)}}
+ w.append(tb);
+}
+function add(){
+ const v=$("name").value.trim();
+ if(!v){say("نام عادت نمی‌تواند خالی باشد.");return}
+ if(data.habits.some(h=>h.name===v)){say("این عادت قبلاً اضافه شده است.");return}
+ data.habits.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:v});
+ save();$("name").value="";say("");render();
+}
+$("addBtn").onclick=add;
+$("name").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();add()}};
+$("next").onclick=()=>{cur=nextFirst(cur);render()};
+$("prev").onclick=()=>{cur=prevFirst(cur);render()};
+$("export").onclick=()=>{
+ const blob=new Blob([JSON.stringify(data,null,1)],{type:"application/json"});
+ const a=document.createElement("a"),j=jal(noon());
+ a.href=URL.createObjectURL(blob);a.download="habits-backup-"+j.y+"-"+pad(j.m)+"-"+pad(j.d)+".json";
+ document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);say("");try{localStorage.setItem(KEY+"-lb",Date.now())}catch(e){}warn();
+};
+$("importBtn").onclick=()=>$("file").click();
+$("file").onchange=async e=>{
+ const f=e.target.files[0];e.target.value="";if(!f)return;
+ try{
+  if(f.size>5e6)throw 0;
+  const d=JSON.parse(await f.text());
+  if(!valid(d))throw 0;
+  if(confirm("اطلاعات فعلی با این پشتیبان جایگزین شود؟")){data={habits:d.habits.map(h=>({id:h.id,name:h.name.trim()})),records:d.records};save();render();say("پشتیبان بازیابی شد.")}
+ }catch(_){say("فایل معتبر نیست؛ اطلاعات فعلی تغییری نکرد.")}
+};
+$("reset").onclick=()=>{
+ if(confirm("همهٔ عادت‌ها و سابقه‌ها برای همیشه پاک شود؟")&&confirm("مطمئنید؟ پیش از این، بهتر است پشتیبان بگیرید.")){data={habits:[],records:{}};save();say("");render()}
+};
+let storageOK=true;
+try{localStorage.setItem(KEY+"-t","1");localStorage.removeItem(KEY+"-t")}catch(e){storageOK=false}
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+function warn(){const m=[];
+ if(!storageOK)m.push("این مرورگر اجازهٔ ذخیره‌سازی نمی‌دهد و اطلاعات پس از بستن صفحه از بین می‌رود.");
+ if(!/^https?:$/.test(location.protocol))m.push("صفحه از فایل محلی باز شده و ذخیره‌سازی در این حالت ناپایدار است؛ آن را روی آدرس HTTPS باز کنید.");
+ if(corrupt)m.push("اطلاعات ذخیره‌شده خوانا نبود و یک نسخه از آن کنار گذاشته شد.");
+ else{let lb=0;try{lb=+localStorage.getItem(KEY+"-lb")||0}catch(e){}
+  if(data.habits.length&&Date.now()-lb>14*DAY)m.push("بیش از دو هفته از آخرین پشتیبان گذشته است؛ «دریافت پشتیبان» را بزنید.")}
+ const w=$("warn");w.textContent=m.join(" ");w.hidden=!m.length}
+warn();render();
+if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
